@@ -1,56 +1,41 @@
 ---
-/**
- * A page section headed like a shell command, e.g. `$ ls ./projects`.
- * The command is decorative; screen readers hear only the section name.
- */
 interface Props {
 	id: string;
-	command: string;
-	label: string;
-	suffix?: string;
+	title: string;
+	/** Optional one-line introduction under the heading. */
+	intro?: string;
 }
 
-const { id, command, label, suffix = '' } = Astro.props;
+const { id, title, intro } = Astro.props;
 ---
 
-<section id={id} aria-labelledby={`${id}-heading`} class="section container">
-	<h2 id={`${id}-heading`}>
-		<span class="prompt" aria-hidden="true">$</span>
-		<span class="command" aria-hidden="true">{command}</span>
-		<span class="label">{label}</span><span class="command" aria-hidden="true">{suffix}</span>
-	</h2>
-	<div class="body">
+<section id={id} aria-labelledby={`${id}-heading`} class="section">
+	<div class="container">
+		<header>
+			<h2 id={`${id}-heading`}>{title}</h2>
+			{intro && <p class="intro muted">{intro}</p>}
+		</header>
 		<slot />
 	</div>
 </section>
 
 <style>
 	.section {
-		padding-top: clamp(3rem, 2rem + 4vw, 5rem);
+		padding-block: clamp(3.5rem, 2.5rem + 4vw, 6rem);
+		border-top: 1px solid var(--border);
+	}
+
+	header {
+		margin-bottom: clamp(1.75rem, 1.25rem + 1.5vw, 2.5rem);
 	}
 
 	h2 {
-		font-size: clamp(1.15rem, 1rem + 0.6vw, 1.4rem);
-		margin-bottom: 1.5rem;
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0 0.6ch;
+		font-size: clamp(1.6rem, 1.3rem + 1.2vw, 2.1rem);
+		font-weight: 700;
 	}
 
-	.prompt {
-		color: var(--prompt);
-	}
-
-	.command {
-		color: var(--muted);
-		font-weight: 400;
-	}
-
-	.label {
-		color: var(--accent);
-	}
-
-	.label + .command {
-		margin-left: -0.6ch;
+	.intro {
+		margin-top: 0.5rem;
+		max-width: var(--measure);
 	}
 </style>

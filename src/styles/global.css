@@ -1,54 +1,51 @@
 /*
- * Terminal theme. Every text/background pair below meets WCAG AA (4.5:1) and is checked
- * by the axe tests in tests/e2e in both themes.
+ * Every text/background pair below meets WCAG AA (4.5:1); the axe tests in tests/e2e
+ * check it in both themes.
  */
 :root {
 	color-scheme: light;
-	--bg: #f4f1e8;
-	--surface: #fbf9f3;
-	--border: #c9c3b1;
-	--text: #1c2320;
-	--muted: #4c5751;
-	--accent: #17692f;
-	--prompt: #7a4f00;
-	--path: #0b55a0;
-	--focus: #0b55a0;
-	--selection: #cfe8d5;
+	--bg: #ffffff;
+	--surface: #f6f7f9;
+	--border: #e2e5ea;
+	--text: #15181e;
+	--muted: #555d6b;
+	--accent: #1f4fd1;
+	--accent-soft: #e9eefc;
+	--focus: #1f4fd1;
 
-	--font-mono: ui-monospace, 'Cascadia Code', 'JetBrains Mono', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
-	--measure: 72ch;
-	--radius: 6px;
-	--space: clamp(1rem, 0.6rem + 1.5vw, 1.5rem);
+	--font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+	--measure: 68ch;
+	--radius: 10px;
+	--gutter: clamp(1rem, 0.5rem + 2vw, 2rem);
+	--shadow: 0 1px 2px rgb(16 24 40 / 0.05), 0 4px 16px -8px rgb(16 24 40 / 0.12);
 }
 
 @media (prefers-color-scheme: dark) {
 	:root:not([data-theme='light']) {
 		color-scheme: dark;
-		--bg: #0b0f0d;
-		--surface: #121815;
-		--border: #2a352f;
-		--text: #d6e0d9;
-		--muted: #9aa8a0;
-		--accent: #7ee08f;
-		--prompt: #f0c463;
-		--path: #82bdf5;
-		--focus: #f0c463;
-		--selection: #24432c;
+		--bg: #111318;
+		--surface: #181b22;
+		--border: #2a2f3a;
+		--text: #e8eaef;
+		--muted: #a3aab8;
+		--accent: #8ea9ff;
+		--accent-soft: #1d2540;
+		--focus: #8ea9ff;
+		--shadow: none;
 	}
 }
 
 :root[data-theme='dark'] {
 	color-scheme: dark;
-	--bg: #0b0f0d;
-	--surface: #121815;
-	--border: #2a352f;
-	--text: #d6e0d9;
-	--muted: #9aa8a0;
-	--accent: #7ee08f;
-	--prompt: #f0c463;
-	--path: #82bdf5;
-	--focus: #f0c463;
-	--selection: #24432c;
+	--bg: #111318;
+	--surface: #181b22;
+	--border: #2a2f3a;
+	--text: #e8eaef;
+	--muted: #a3aab8;
+	--accent: #8ea9ff;
+	--accent-soft: #1d2540;
+	--focus: #8ea9ff;
+	--shadow: none;
 }
 
 *,
@@ -59,7 +56,7 @@
 
 html {
 	scroll-behavior: smooth;
-	scroll-padding-top: 4.5rem;
+	scroll-padding-top: 5rem;
 	-webkit-text-size-adjust: 100%;
 	text-size-adjust: 100%;
 }
@@ -71,7 +68,6 @@ html {
 	*,
 	*::before,
 	*::after {
-		animation: none !important;
 		transition: none !important;
 	}
 }
@@ -80,19 +76,16 @@ body {
 	margin: 0;
 	background: var(--bg);
 	color: var(--text);
-	font-family: var(--font-mono);
-	font-size: 1rem;
+	font-family: var(--font-sans);
+	font-size: 1.0625rem;
 	line-height: 1.65;
+	-webkit-font-smoothing: antialiased;
 	overflow-wrap: break-word;
-}
-
-::selection {
-	background: var(--selection);
 }
 
 a {
 	color: var(--accent);
-	text-underline-offset: 0.2em;
+	text-underline-offset: 0.18em;
 	text-decoration-thickness: 1px;
 }
 
@@ -103,15 +96,16 @@ a:hover {
 :focus-visible {
 	outline: 2px solid var(--focus);
 	outline-offset: 3px;
-	border-radius: 2px;
+	border-radius: 4px;
 }
 
 h1,
 h2,
-h3 {
-	line-height: 1.25;
-	font-weight: 700;
+h3,
+h4 {
+	line-height: 1.2;
 	margin: 0;
+	letter-spacing: -0.015em;
 }
 
 ul,
@@ -139,12 +133,13 @@ p {
 
 .skip-link {
 	position: absolute;
-	left: var(--space);
+	left: var(--gutter);
 	top: -3rem;
 	z-index: 100;
-	padding: 0.5rem 0.75rem;
-	background: var(--surface);
-	border: 1px solid var(--accent);
+	padding: 0.5rem 0.9rem;
+	background: var(--bg);
+	color: var(--accent);
+	border: 2px solid var(--accent);
 	border-radius: var(--radius);
 }
 
@@ -153,7 +148,7 @@ p {
 }
 
 .container {
-	width: min(100% - 2 * var(--space), 60rem);
+	width: min(100% - 2 * var(--gutter), 62rem);
 	margin-inline: auto;
 }
 
@@ -161,18 +156,74 @@ p {
 	color: var(--muted);
 }
 
-/* "Tag" chips used for tech stacks and skills. */
-.chips {
+/* Small tags for tech stacks and skills. */
+.tags {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 0.4rem;
 }
 
-.chips li {
+.tags li {
 	font-size: 0.85rem;
-	padding: 0.05rem 0.5rem;
-	border: 1px solid var(--border);
-	border-radius: var(--radius);
+	line-height: 1.5;
+	padding: 0.15rem 0.6rem;
+	border-radius: 999px;
+	background: var(--accent-soft);
 	color: var(--text);
+}
+
+/* Bulleted detail lists inside cards and timelines. */
+.points {
+	display: grid;
+	gap: 0.3rem;
+}
+
+.points li {
+	position: relative;
+	padding-left: 1.1rem;
+	color: var(--muted);
+	font-size: 0.975rem;
+}
+
+.points li::before {
+	content: '';
+	position: absolute;
+	left: 0.15rem;
+	top: 0.7em;
+	width: 5px;
+	height: 5px;
+	border-radius: 50%;
+	background: var(--accent);
+}
+
+.button {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	min-height: 2.75rem;
+	padding: 0.55rem 1.15rem;
+	border-radius: var(--radius);
+	border: 1px solid var(--border);
 	background: var(--bg);
+	color: var(--text);
+	font-weight: 600;
+	font-size: 0.975rem;
+	text-decoration: none;
+	transition:
+		border-color 150ms ease,
+		background-color 150ms ease;
+}
+
+.button:hover {
+	border-color: var(--accent);
+}
+
+.button.primary {
+	background: var(--accent);
+	border-color: var(--accent);
+	color: var(--bg);
+}
+
+.button.primary:hover {
+	background: color-mix(in srgb, var(--accent) 88%, var(--text));
 }

@@ -13,26 +13,30 @@ const { entries, label } = Astro.props;
 <ol class="timeline" aria-label={label}>
 	{
 		byMostRecent(entries).map((entry) => (
-			<li>
-				<div class="head">
-					<h4>
-						{entry.title} <span class="at">@ {entry.org}</span>
-					</h4>
-					<p class="meta muted">
-						<time datetime={toDatetime(entry.start)}>{formatMonth(entry.start)}</time> –{' '}
-						{entry.end === 'present' ? <span>Present</span> : <time datetime={toDatetime(entry.end)}>{formatMonth(entry.end)}</time>}
-						<span aria-hidden="true"> · </span>
-						<span class="visually-hidden">, </span>
-						{entry.location}
+			<li class="entry">
+				<p class="dates muted">
+					<time datetime={toDatetime(entry.start)}>{formatMonth(entry.start)}</time>
+					{' – '}
+					{entry.end === 'present' ? (
+						<span>Present</span>
+					) : (
+						<time datetime={toDatetime(entry.end)}>{formatMonth(entry.end)}</time>
+					)}
+				</p>
+				<div class="details">
+					<h3>{entry.title}</h3>
+					<p class="org">
+						{entry.org}
+						<span class="muted">, {entry.location}</span>
 					</p>
+					{entry.points.length > 0 && (
+						<ul class="points">
+							{entry.points.map((point) => (
+								<li>{point}</li>
+							))}
+						</ul>
+					)}
 				</div>
-				{entry.points.length > 0 && (
-					<ul>
-						{entry.points.map((point) => (
-							<li>{point}</li>
-						))}
-					</ul>
-				)}
 			</li>
 		))
 	}
@@ -41,50 +45,42 @@ const { entries, label } = Astro.props;
 <style>
 	.timeline {
 		display: grid;
-		gap: 1.75rem;
-		border-left: 1px dashed var(--border);
-		padding-left: 1.25rem;
 	}
 
-	.timeline > li {
-		position: relative;
+	.entry {
+		display: grid;
+		gap: 0.35rem 2rem;
+		padding-block: 1.5rem;
+		border-bottom: 1px solid var(--border);
 	}
 
-	.timeline > li::before {
-		content: '';
-		position: absolute;
-		left: calc(-1.25rem - 4px);
-		top: 0.55em;
-		width: 7px;
-		height: 7px;
-		border-radius: 50%;
-		background: var(--accent);
+	.entry:first-child {
+		padding-top: 0;
 	}
 
-	h4 {
-		font-size: 1rem;
+	.entry:last-child {
+		border-bottom: 0;
+		padding-bottom: 0;
 	}
 
-	.at {
-		color: var(--path);
-		font-weight: 400;
+	@media (min-width: 44rem) {
+		.entry {
+			grid-template-columns: 11rem 1fr;
+		}
 	}
 
-	.meta {
-		font-size: 0.85rem;
-		margin-bottom: 0.4rem;
-	}
-
-	ul li {
-		position: relative;
-		padding-left: 1.5ch;
+	.dates {
 		font-size: 0.925rem;
+		font-variant-numeric: tabular-nums;
+		padding-top: 0.15rem;
 	}
 
-	ul li::before {
-		content: '-';
-		position: absolute;
-		left: 0;
-		color: var(--muted);
+	h3 {
+		font-size: 1.1rem;
+		font-weight: 650;
+	}
+
+	.org {
+		margin-bottom: 0.6rem;
 	}
 </style>

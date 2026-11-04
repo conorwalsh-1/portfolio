@@ -6,74 +6,58 @@ import { awards, education, experience, profile, projects, skills } from '../dat
 import Base from '../layouts/Base.astro';
 import { linkAttrs, mailto } from '../utils/links';
 
-const description = `${profile.name}: ${profile.role} in ${profile.location}. Projects, experience and skills.`;
+const description = `${profile.name}: ${profile.role} at the University of Limerick. Projects, experience and skills.`;
 ---
 
-<Base title={`${profile.name} · ${profile.role}`} description={description}>
-	<section class="hero container" aria-labelledby="hero-heading">
-		<div class="window">
-			<div class="titlebar" aria-hidden="true">
-				<span class="dots"><i></i><i></i><i></i></span>
-				<span class="title">conor@portfolio: ~</span>
-			</div>
-			<div class="screen">
-				<p class="line" aria-hidden="true"><span class="ps1">conor@portfolio:~$</span> whoami</p>
-				<h1 id="hero-heading">{profile.name}</h1>
-				<p class="role">{profile.role} <span class="muted">· {profile.location}</span></p>
-				<p class="line" aria-hidden="true"><span class="ps1">conor@portfolio:~$</span> cat tagline.txt</p>
-				<p class="tagline">{profile.tagline}</p>
-				<p class="line" aria-hidden="true">
-					<span class="ps1">conor@portfolio:~$</span> <span class="cursor"></span>
-				</p>
-				<ul class="cta">
-					<li><a href="#projects" class="button primary">View projects</a></li>
-					<li><a href={mailto(profile.email)} class="button">Get in touch</a></li>
-				</ul>
-			</div>
+<Base title={`${profile.name}, ${profile.role}`} description={description}>
+	<section class="hero" aria-labelledby="hero-heading">
+		<div class="container">
+			<p class="eyebrow">{profile.location}</p>
+			<h1 id="hero-heading">{profile.name}</h1>
+			<p class="lede">{profile.tagline}</p>
+			<ul class="cta">
+				<li><a href="#projects" class="button primary">View my work</a></li>
+				<li><a href={mailto(profile.email)} class="button">Get in touch</a></li>
+			</ul>
 		</div>
 	</section>
 
-	<Section id="about" command="cat" label="about" suffix=".md">
-		<div class="prose">
-			{profile.about.map((paragraph) => <p>{paragraph}</p>)}
+	<Section id="about" title="About">
+		<div class="about">
+			<div class="prose">
+				{profile.about.map((paragraph) => <p>{paragraph}</p>)}
+			</div>
+			<aside class="highlights" aria-labelledby="highlights-heading">
+				<h3 id="highlights-heading">Highlights</h3>
+				<ul class="points">
+					{awards.map((award) => <li>{award}</li>)}
+				</ul>
+			</aside>
 		</div>
-		<h3 class="sub">Highlights</h3>
-		<ul class="awards">
-			{awards.map((award) => <li>{award}</li>)}
-		</ul>
 	</Section>
 
-	<Section id="projects" command="ls ./" label="projects">
+	<Section id="projects" title="Projects" intro="A selection of software, modelling and design work.">
 		<div class="grid">
 			{projects.map((project) => <ProjectCard project={project} />)}
 		</div>
 	</Section>
 
-	<Section id="experience" command="cat" label="experience" suffix=".log">
-		<div class="split">
-			<div>
-				<h3 class="sub">Work</h3>
-				<Timeline entries={experience} label="Work experience" />
-			</div>
-			<div>
-				<h3 class="sub">Education</h3>
-				<Timeline entries={education} label="Education" />
-			</div>
-		</div>
+	<Section id="experience" title="Experience">
+		<Timeline entries={experience} label="Work experience" />
 	</Section>
 
-	<Section id="skills" command="cat" label="skills" suffix=".json">
+	<Section id="education" title="Education">
+		<Timeline entries={education} label="Education history" />
+	</Section>
+
+	<Section id="skills" title="Skills">
 		<dl class="skills">
 			{
 				skills.map((group) => (
 					<div class="skill-row">
-						<dt>
-							<span aria-hidden="true">"</span>
-							{group.name}
-							<span aria-hidden="true">":</span>
-						</dt>
+						<dt>{group.name}</dt>
 						<dd>
-							<ul class="chips">
+							<ul class="tags">
 								{group.items.map((item) => (
 									<li>{item}</li>
 								))}
@@ -85,22 +69,16 @@ const description = `${profile.name}: ${profile.role} in ${profile.location}. Pr
 		</dl>
 	</Section>
 
-	<Section id="contact" command="echo $" label="contact">
-		<p class="prose">
-			I'm open to internships, collaborations and a chat about software, maths or music. Email is the best way to reach
-			me.
-		</p>
+	<Section id="contact" title="Contact" intro="I'm open to internships and collaborations. Email is the best way to reach me.">
 		<ul class="contact">
 			<li>
-				<span class="key" aria-hidden="true">email</span>
+				<span class="label">Email</span>
 				<a href={mailto(profile.email)}>{profile.email}</a>
 			</li>
 			{
 				profile.links.map((link) => (
 					<li>
-						<span class="key" aria-hidden="true">
-							{link.label.toLowerCase()}
-						</span>
+						<span class="label">{link.label}</span>
 						<a {...linkAttrs(link.href)}>
 							{link.href.replace(/^https:\/\/(www\.)?/, '')}
 							<span class="visually-hidden">({link.label}, opens in a new tab)</span>
@@ -114,153 +92,65 @@ const description = `${profile.name}: ${profile.role} in ${profile.location}. Pr
 
 <style>
 	.hero {
-		padding-top: clamp(2rem, 1rem + 5vw, 4.5rem);
+		padding-block: clamp(4rem, 2.5rem + 7vw, 8rem) clamp(3.5rem, 2.5rem + 4vw, 6rem);
 	}
 
-	.window {
-		background: var(--surface);
-		border: 1px solid var(--border);
-		border-radius: calc(var(--radius) * 1.5);
-		overflow: hidden;
-		box-shadow: 0 12px 40px -24px rgb(0 0 0 / 0.5);
-	}
-
-	.titlebar {
-		display: flex;
-		align-items: center;
-		gap: 1rem;
-		padding: 0.55rem 0.9rem;
-		border-bottom: 1px solid var(--border);
-		font-size: 0.8rem;
-		color: var(--muted);
-	}
-
-	.dots {
-		display: inline-flex;
-		gap: 6px;
-	}
-
-	.dots i {
-		width: 10px;
-		height: 10px;
-		border-radius: 50%;
-		background: var(--border);
-	}
-
-	.screen {
-		padding: clamp(1.25rem, 0.75rem + 2.5vw, 2.5rem);
-		display: grid;
-		gap: 0.5rem;
-	}
-
-	.line {
-		color: var(--muted);
-		font-size: 0.9rem;
-	}
-
-	.line + :not(.line) {
-		margin-top: -0.25rem;
-	}
-
-	.ps1 {
+	.eyebrow {
 		color: var(--accent);
+		font-weight: 600;
+		font-size: 0.95rem;
+		margin-bottom: 0.75rem;
 	}
 
 	h1 {
-		font-size: clamp(2rem, 1.2rem + 4.5vw, 3.75rem);
-		letter-spacing: -0.02em;
-		color: var(--text);
+		font-size: clamp(2.6rem, 1.6rem + 5vw, 4.5rem);
+		font-weight: 750;
+		letter-spacing: -0.03em;
+		line-height: 1.05;
 	}
 
-	.role {
-		color: var(--path);
-		margin-bottom: 1rem;
-	}
-
-	.tagline {
-		max-width: var(--measure);
-		margin-bottom: 1rem;
-	}
-
-	.cursor {
-		display: inline-block;
-		width: 0.6em;
-		height: 1.1em;
-		vertical-align: text-bottom;
-		background: var(--accent);
-		animation: blink 1.1s steps(1) infinite;
-	}
-
-	@keyframes blink {
-		50% {
-			opacity: 0;
-		}
+	.lede {
+		margin-top: 1.25rem;
+		max-width: 42rem;
+		font-size: clamp(1.1rem, 1rem + 0.5vw, 1.3rem);
+		color: var(--muted);
 	}
 
 	.cta {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.75rem;
-		margin-top: 0.75rem;
+		margin-top: 2rem;
 	}
 
-	.button {
-		display: inline-block;
-		padding: 0.55rem 1rem;
-		border: 1px solid var(--accent);
-		border-radius: var(--radius);
-		text-decoration: none;
-		font-weight: 700;
+	.about {
+		display: grid;
+		gap: 2.5rem;
 	}
 
-	.button.primary {
-		background: var(--accent);
-		color: var(--bg);
-	}
-
-	.button:hover {
-		text-decoration: underline;
+	@media (min-width: 56rem) {
+		.about {
+			grid-template-columns: 1.4fr 1fr;
+			gap: 3.5rem;
+		}
 	}
 
 	.prose {
 		display: grid;
-		gap: 1rem;
+		gap: 1.1rem;
 		max-width: var(--measure);
 	}
 
-	.sub {
+	.highlights {
+		padding: 1.5rem;
+		background: var(--surface);
+		border-radius: var(--radius);
+		align-self: start;
+	}
+
+	.highlights h3 {
 		font-size: 1rem;
-		color: var(--muted);
-		margin: 2rem 0 1rem;
-	}
-
-	.sub::before {
-		content: '## ';
-		color: var(--prompt);
-	}
-
-	.split .sub {
-		margin-top: 0;
-	}
-
-	.awards {
-		display: grid;
-		gap: 0.4rem;
-		max-width: var(--measure);
-	}
-
-	.awards li {
-		position: relative;
-		padding-left: 2.5ch;
-	}
-
-	.awards li::before {
-		content: '[*]';
-		position: absolute;
-		left: 0;
-		color: var(--accent);
-		font-size: 0.7em;
-		top: 0.35em;
+		margin-bottom: 0.9rem;
 	}
 
 	.grid {
@@ -269,36 +159,35 @@ const description = `${profile.name}: ${profile.role} in ${profile.location}. Pr
 		grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
 	}
 
-	.split {
-		display: grid;
-		gap: 2.5rem;
-		grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
-	}
-
 	.skills {
 		margin: 0;
 		display: grid;
-		gap: 0.9rem;
-		padding: 1.25rem;
-		background: var(--surface);
-		border: 1px solid var(--border);
-		border-radius: var(--radius);
 	}
 
 	.skill-row {
 		display: grid;
-		gap: 0.4rem;
+		gap: 0.5rem 2rem;
+		padding-block: 1rem;
+		border-bottom: 1px solid var(--border);
 	}
 
-	@media (min-width: 40rem) {
+	.skill-row:first-child {
+		padding-top: 0;
+	}
+
+	.skill-row:last-child {
+		border-bottom: 0;
+	}
+
+	@media (min-width: 44rem) {
 		.skill-row {
-			grid-template-columns: 12ch 1fr;
+			grid-template-columns: 11rem 1fr;
 			align-items: baseline;
 		}
 	}
 
 	dt {
-		color: var(--path);
+		font-weight: 600;
 	}
 
 	dd {
@@ -307,22 +196,17 @@ const description = `${profile.name}: ${profile.role} in ${profile.location}. Pr
 
 	.contact {
 		display: grid;
-		gap: 0.6rem;
-		margin-top: 1.5rem;
+		gap: 0.75rem;
 	}
 
 	.contact li {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0 1ch;
+		gap: 0 1rem;
 	}
 
-	.key {
-		color: var(--prompt);
-		min-width: 9ch;
-	}
-
-	.key::after {
-		content: ':';
+	.label {
+		min-width: 6rem;
+		font-weight: 600;
 	}
 </style>
