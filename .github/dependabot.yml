@@ -1,0 +1,21 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      astro:
+        patterns: ['astro', '@astrojs/*']
+      lint:
+        patterns: ['eslint', 'eslint-*', 'typescript-eslint']
+      test:
+        patterns: ['vitest', '@vitest/*', '@playwright/test', '@axe-core/*', 'happy-dom']
+    ignore:
+      # TypeScript 7 is not yet supported by @astrojs/check or typescript-eslint.
+      - dependency-name: typescript
+        update-types: ['version-update:semver-major']
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
