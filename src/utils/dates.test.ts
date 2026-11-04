@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { byMostRecent, formatMonth, formatRange, isOrdered, toDatetime } from './dates';
+import { byMostRecent, formatMonth, formatRange, formatYears, isOrdered, toDatetime } from './dates';
 
 describe('formatMonth', () => {
 	it('formats a year-month stamp', () => {
@@ -60,5 +60,16 @@ describe('toDatetime', () => {
 	it('passes real months through and drops present', () => {
 		expect(toDatetime('2024-09')).toBe('2024-09');
 		expect(toDatetime('present')).toBeUndefined();
+	});
+});
+
+describe('formatYears', () => {
+	it('shows a year range, with Now for ongoing roles', () => {
+		expect(formatYears('2024-09', 'present')).toBe('2024 – Now');
+		expect(formatYears('2021-09', '2026-06')).toBe('2021 – 2026');
+	});
+
+	it('collapses a range inside one year', () => {
+		expect(formatYears('2026-01', '2026-10')).toBe('2026');
 	});
 });

@@ -1,0 +1,100 @@
+---
+/**
+ * A quiet labelled list: a small heading, then rows of
+ * "title · detail ........ date", the style of a plain personal site.
+ */
+interface Row {
+	title: string;
+	detail?: string;
+	date: string;
+	href?: string;
+}
+
+interface Props {
+	id: string;
+	heading: string;
+	rows: Row[];
+}
+
+const { id, heading, rows } = Astro.props;
+---
+
+<section class="list" aria-labelledby={`${id}-heading`}>
+	<h2 id={`${id}-heading`}>{heading}</h2>
+	<ul>
+		{
+			rows.map((row) => (
+				<li>
+					<div class="top">
+						{row.href ? (
+							<a class="title" href={row.href} target="_blank" rel="noopener noreferrer">
+								{row.title}
+								<span class="visually-hidden"> (opens in a new tab)</span>
+							</a>
+						) : (
+							<span class="title">{row.title}</span>
+						)}
+						<span class="date">{row.date}</span>
+					</div>
+					{row.detail && <p class="detail">{row.detail}</p>}
+				</li>
+			))
+		}
+	</ul>
+</section>
+
+<style>
+	.list {
+		margin-top: 3rem;
+	}
+
+	h2 {
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: var(--muted);
+		margin-bottom: 1rem;
+	}
+
+	li + li {
+		margin-top: 1.1rem;
+	}
+
+	.top {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+
+	.title {
+		color: var(--text);
+		font-weight: 500;
+	}
+
+	span.title {
+		text-decoration: none;
+	}
+
+	.date {
+		flex-shrink: 0;
+		color: var(--muted);
+		font-size: 0.875rem;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.detail {
+		color: var(--muted);
+		font-size: 0.9375rem;
+		line-height: 1.55;
+		margin-top: 0.15rem;
+	}
+
+	.visually-hidden {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+	}
+</style>

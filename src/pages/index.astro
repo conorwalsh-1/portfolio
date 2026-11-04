@@ -1,212 +1,87 @@
 ---
-import ProjectCard from '../components/ProjectCard.astro';
-import Section from '../components/Section.astro';
-import Timeline from '../components/Timeline.astro';
-import { awards, education, experience, profile, projects, skills } from '../data/profile';
+import List from '../components/List.astro';
+import { education, profile, projects, work } from '../data/profile';
 import Base from '../layouts/Base.astro';
-import { linkAttrs, mailto } from '../utils/links';
+import { byMostRecent, formatYears } from '../utils/dates';
+import { mailto } from '../utils/links';
 
-const description = `${profile.name}: ${profile.role} at the University of Limerick. Projects, experience and skills.`;
+const description = `${profile.name}: software engineering student at the University of Limerick.`;
+
+const external = { target: '_blank', rel: 'noopener noreferrer' } as const;
+
+const rows = (roles: typeof work) =>
+	byMostRecent(roles).map((role) => ({ title: role.title, detail: role.org, date: formatYears(role.start, role.end) }));
 ---
 
-<Base title={`${profile.name}, ${profile.role}`} description={description}>
-	<section class="hero" aria-labelledby="hero-heading">
-		<div class="container">
-			<p class="eyebrow">{profile.location}</p>
-			<h1 id="hero-heading">{profile.name}</h1>
-			<p class="lede">{profile.tagline}</p>
-			<ul class="cta">
-				<li><a href="#projects" class="button primary">View my work</a></li>
-				<li><a href={mailto(profile.email)} class="button">Get in touch</a></li>
-			</ul>
-		</div>
+<Base title={profile.name} description={description}>
+	<header class="intro">
+		<h1>{profile.name}</h1>
+		<p class="role">{profile.role}</p>
+	</header>
+
+	<div class="prose">
+		<p>
+			I’m in my first year of Immersive Software Engineering at the{' '}
+			<a href={profile.school.href} {...external}>{profile.school.name}</a>. Before that I spent most of my time on maths
+			and physics, and finished the Leaving Cert with 613 points, including 600/600 in Higher Level Maths.
+		</p>
+		<p>
+			Recently I built{' '}
+			<a href="https://github.com/conorwalsh-1/cs4421-astro-blog" {...external}>Pianoforte</a>, a site about classical
+			piano with a playable keyboard, tested and deployed to AWS automatically on every change. I also led a team of
+			four on a Linux hardware inspector written in Java.
+		</p>
+		<p>
+			I mostly write Java, Python and TypeScript, and have worked with Git, GitHub Actions, Docker and AWS. Outside of
+			code I tutor Leaving Cert students in maths and physics, and I’m working towards Grade 8 piano.
+		</p>
+	</div>
+
+	<List
+		id="projects"
+		heading="Projects"
+		rows={projects.map((p) => ({ title: p.name, detail: p.blurb, date: p.year, href: p.href }))}
+	/>
+
+	<List id="work" heading="Work" rows={rows(work)} />
+
+	<List id="education" heading="Education" rows={rows(education)} />
+
+	<section class="contact" aria-labelledby="contact-heading">
+		<h2 id="contact-heading">Contact</h2>
+		<p>
+			Email me at <a href={mailto(profile.email)}>{profile.email}</a>, or find me on{' '}
+			<a href={profile.github.href} {...external}>{profile.github.label}</a> and{' '}
+			<a href={profile.linkedin.href} {...external}>{profile.linkedin.label}</a>.
+		</p>
 	</section>
-
-	<Section id="about" title="About">
-		<div class="about">
-			<div class="prose">
-				{profile.about.map((paragraph) => <p>{paragraph}</p>)}
-			</div>
-			<aside class="highlights" aria-labelledby="highlights-heading">
-				<h3 id="highlights-heading">Highlights</h3>
-				<ul class="points">
-					{awards.map((award) => <li>{award}</li>)}
-				</ul>
-			</aside>
-		</div>
-	</Section>
-
-	<Section id="projects" title="Projects" intro="A selection of software, modelling and design work.">
-		<div class="grid">
-			{projects.map((project) => <ProjectCard project={project} />)}
-		</div>
-	</Section>
-
-	<Section id="experience" title="Experience">
-		<Timeline entries={experience} label="Work experience" />
-	</Section>
-
-	<Section id="education" title="Education">
-		<Timeline entries={education} label="Education history" />
-	</Section>
-
-	<Section id="skills" title="Skills">
-		<dl class="skills">
-			{
-				skills.map((group) => (
-					<div class="skill-row">
-						<dt>{group.name}</dt>
-						<dd>
-							<ul class="tags">
-								{group.items.map((item) => (
-									<li>{item}</li>
-								))}
-							</ul>
-						</dd>
-					</div>
-				))
-			}
-		</dl>
-	</Section>
-
-	<Section id="contact" title="Contact" intro="I'm open to internships and collaborations. Email is the best way to reach me.">
-		<ul class="contact">
-			<li>
-				<span class="label">Email</span>
-				<a href={mailto(profile.email)}>{profile.email}</a>
-			</li>
-			{
-				profile.links.map((link) => (
-					<li>
-						<span class="label">{link.label}</span>
-						<a {...linkAttrs(link.href)}>
-							{link.href.replace(/^https:\/\/(www\.)?/, '')}
-							<span class="visually-hidden">({link.label}, opens in a new tab)</span>
-						</a>
-					</li>
-				))
-			}
-		</ul>
-	</Section>
 </Base>
 
 <style>
-	.hero {
-		padding-block: clamp(4rem, 2.5rem + 7vw, 8rem) clamp(3.5rem, 2.5rem + 4vw, 6rem);
-	}
-
-	.eyebrow {
-		color: var(--accent);
-		font-weight: 600;
-		font-size: 0.95rem;
-		margin-bottom: 0.75rem;
-	}
-
 	h1 {
-		font-size: clamp(2.6rem, 1.6rem + 5vw, 4.5rem);
-		font-weight: 750;
-		letter-spacing: -0.03em;
-		line-height: 1.05;
+		font-size: 1rem;
+		font-weight: 600;
+		color: var(--text);
 	}
 
-	.lede {
-		margin-top: 1.25rem;
-		max-width: 42rem;
-		font-size: clamp(1.1rem, 1rem + 0.5vw, 1.3rem);
+	.role {
 		color: var(--muted);
 	}
 
-	.cta {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.75rem;
-		margin-top: 2rem;
-	}
-
-	.about {
-		display: grid;
-		gap: 2.5rem;
-	}
-
-	@media (min-width: 56rem) {
-		.about {
-			grid-template-columns: 1.4fr 1fr;
-			gap: 3.5rem;
-		}
-	}
-
 	.prose {
+		margin-top: 2.5rem;
 		display: grid;
 		gap: 1.1rem;
-		max-width: var(--measure);
-	}
-
-	.highlights {
-		padding: 1.5rem;
-		background: var(--surface);
-		border-radius: var(--radius);
-		align-self: start;
-	}
-
-	.highlights h3 {
-		font-size: 1rem;
-		margin-bottom: 0.9rem;
-	}
-
-	.grid {
-		display: grid;
-		gap: 1.25rem;
-		grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
-	}
-
-	.skills {
-		margin: 0;
-		display: grid;
-	}
-
-	.skill-row {
-		display: grid;
-		gap: 0.5rem 2rem;
-		padding-block: 1rem;
-		border-bottom: 1px solid var(--border);
-	}
-
-	.skill-row:first-child {
-		padding-top: 0;
-	}
-
-	.skill-row:last-child {
-		border-bottom: 0;
-	}
-
-	@media (min-width: 44rem) {
-		.skill-row {
-			grid-template-columns: 11rem 1fr;
-			align-items: baseline;
-		}
-	}
-
-	dt {
-		font-weight: 600;
-	}
-
-	dd {
-		margin: 0;
 	}
 
 	.contact {
-		display: grid;
-		gap: 0.75rem;
+		margin-top: 3rem;
 	}
 
-	.contact li {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0 1rem;
-	}
-
-	.label {
-		min-width: 6rem;
-		font-weight: 600;
+	.contact h2 {
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: var(--muted);
+		margin-bottom: 1rem;
 	}
 </style>

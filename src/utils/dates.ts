@@ -46,3 +46,11 @@ export function isOrdered(start: MonthStamp, end: MonthStamp): boolean {
 export function toDatetime(stamp: MonthStamp): string | undefined {
 	return stamp === 'present' ? undefined : stamp;
 }
+
+/** Compact year range for list rows: `2024 – Now`, or a single year when it starts and ends in one. */
+export function formatYears(start: MonthStamp, end: MonthStamp): string {
+	const year = (stamp: MonthStamp) => (stamp === 'present' ? 'Now' : String(parse(stamp)[0]));
+	const from = year(start);
+	const to = year(end);
+	return from === to ? from : `${from} – ${to}`;
+}
