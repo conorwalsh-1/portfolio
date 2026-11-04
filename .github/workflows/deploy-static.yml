@@ -1,0 +1,61 @@
+name: Deploy Portfolio via AWS CDK
+
+# Manual only: nothing is deployed (and nothing is billed) until this is run from the
+# Actions tab. To deploy on every merge later, add `push: branches: [main]` under `on`.
+on:
+  workflow_dispatch:
+    inputs:
+      cloudfront:
+        description: 'Serve through CloudFront (needs a verified AWS account). Defaults to the USE_CLOUDFRONT variable, else false.'
+        type: choice
+        options: [default, 'true', 'false']
+        default: default
+
+permissions:
+  contents: read
+
+concurrency:
+  group: portfolio-deployment
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            cdk/package-lock.json
+
+      - name: Install project and CDK dependencies
+        run: |
+          npm ci
+          npm ci --prefix cdk
+
+      # The stack uploads dist/, so the site must be built before CDK runs.
+      - name: Build static site
+        run: npm run build
+
+      - name: Test CDK stack
+        working-directory: cdk
+        run: npm test -- --runInBand
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Deploy infrastructure and site with AWS CDK
+        working-directory: cdk
+        env:
+          CLOUDFRONT: ${{ inputs.cloudfront != 'default' && inputs.cloudfront || vars.USE_CLOUDFRONT || 'false' }}
+        run: npx cdk deploy PortfolioSiteStack --require-approval never -c cloudfront="$CLOUDFRONT"
