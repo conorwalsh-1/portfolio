@@ -1,6 +1,6 @@
 # Conor Walsh: Portfolio
 
-Personal portfolio site for Conor Walsh, built as a fully static [Astro](https://astro.build) site.
+Personal portfolio site
 
 ## Development
 
