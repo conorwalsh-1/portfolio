@@ -35,11 +35,12 @@ export const profile = {
 	handle: 'conorwalsh-1',
 	role: 'Immersive Software Engineering student',
 	location: 'Limerick, Ireland',
-	tagline: 'I build software with tests, pipelines and infrastructure in place from the first commit.',
+	tagline:
+		'First-year software engineering student at the University of Limerick, with a background in maths, physics and engineering design.',
 	about: [
-		'I am studying Immersive Software Engineering at the University of Limerick. I have enjoyed maths, physics and building things for as long as I can remember, and I came to software through mathematical modelling and engineering design.',
-		'Most recently I led a four-person team building a Linux hardware inspector in Java, and built Pianoforte, an Astro site with a playable 88-key piano, deployed to AWS through a tested CI/CD pipeline.',
-		'Outside of code I tutor Leaving Certificate students in maths and physics and I play piano (preparing for RIAM Grade 8).',
+		'I’m studying Immersive Software Engineering at the University of Limerick. Before university I focused on maths, physics and engineering design, and finished the Leaving Certificate with 613 CAO points, including 600/600 in Higher Level Maths.',
+		'Recently I led a team of four building a Linux hardware inspector in Java, and built Pianoforte, a website about classical piano music with a playable 88-key piano, deployed to AWS with automated testing and deployment.',
+		'Alongside my studies I tutor Leaving Certificate students in maths and physics, work part-time at McDonald’s, and play piano. I’m currently preparing for RIAM Grade 8.',
 	],
 	email: 'conorwalsh680@gmail.com',
 	links: [
@@ -162,12 +163,12 @@ export const awards: string[] = [
 ];
 
 export const skills: SkillGroup[] = [
-	{ name: 'languages', items: ['Java', 'Python', 'TypeScript', 'JavaScript', 'HTML/CSS'] },
+	{ name: 'Programming', items: ['Java', 'Python', 'TypeScript', 'JavaScript', 'HTML/CSS'] },
 	{
-		name: 'devops',
-		items: ['Git', 'GitHub Actions', 'Docker', 'AWS CDK', 'S3', 'CloudFront', 'ECS', 'Vitest', 'Playwright'],
+		name: 'DevOps & cloud',
+		items: ['Git', 'GitHub Actions', 'Docker', 'AWS (CDK, S3, CloudFront, ECS)', 'Vitest', 'Playwright'],
 	},
-	{ name: 'tools', items: ['Linux', 'LaTeX', 'SolidWorks', 'Microsoft Office'] },
-	{ name: 'other', items: ['Mathematical modelling', 'Team leadership', 'Agile / Kanban'] },
-	{ name: 'spoken', items: ['English (native)', 'Irish'] },
+	{ name: 'Tools', items: ['Linux', 'LaTeX', 'SolidWorks', 'Microsoft Office'] },
+	{ name: 'Other', items: ['Mathematical modelling', 'Team leadership', 'Agile / Kanban'] },
+	{ name: 'Languages', items: ['English (native)', 'Irish'] },
 ];
