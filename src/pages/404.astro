@@ -2,27 +2,16 @@
 import Base from '../layouts/Base.astro';
 ---
 
-<Base title="Page not found · Conor Walsh" description="This page does not exist.">
-	<section class="container notfound" aria-labelledby="nf-heading">
-		<p class="muted" aria-hidden="true"><span class="ps1">conor@portfolio:~$</span> cd ./this-page</p>
-		<h1 id="nf-heading">404: no such file or directory</h1>
-		<p>The page you were looking for isn't here.</p>
-		<p><a href="/">cd ~ <span class="muted">(back to the home page)</span></a></p>
-	</section>
+<Base title="Page not found | Conor Walsh" description="This page does not exist.">
+	<h1>Page not found</h1>
+	<p>This page doesn’t exist. <a href="/">Go to the home page</a>.</p>
 </Base>
 
 <style>
-	.notfound {
-		padding-top: 4rem;
-		display: grid;
-		gap: 1rem;
-	}
-
 	h1 {
-		font-size: clamp(1.4rem, 1rem + 2vw, 2.2rem);
-	}
-
-	.ps1 {
-		color: var(--accent);
+		font-size: 1rem;
+		font-weight: 600;
+		color: var(--text);
+		margin-bottom: 0.5rem;
 	}
 </style>

@@ -4,76 +4,73 @@ test.beforeEach(async ({ page }) => {
 	await page.goto('/');
 });
 
-test('hero introduces Conor', async ({ page }) => {
-	await expect(page).toHaveTitle(/Conor Walsh/);
+test('introduces Conor', async ({ page }) => {
+	await expect(page).toHaveTitle('Conor Walsh');
 	await expect(page.getByRole('heading', { level: 1 })).toHaveText('Conor Walsh');
-	await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /Software Engineering/);
+	await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /University of Limerick/);
+	await expect(page.getByRole('main')).toContainText('Immersive Software Engineering');
 });
 
-test('every section is present with an accessible name', async ({ page }) => {
-	for (const name of ['about', 'projects', 'experience', 'skills', 'contact']) {
-		await expect(page.getByRole('region', { name, exact: true })).toBeVisible();
-	}
+test('inline links keep the spaces around them', async ({ page }) => {
+	const main = page.getByRole('main');
+	await expect(main).toContainText('at the University of Limerick');
+	await expect(main).toContainText('Recently I built Pianoforte');
+	await expect(main).toContainText('find me on GitHub and LinkedIn');
 });
 
-test('main navigation jumps to each section', async ({ page }) => {
-	const nav = page.getByRole('navigation', { name: 'Main' });
-	for (const name of ['about', 'projects', 'experience', 'skills', 'contact']) {
-		await nav.getByRole('link', { name, exact: true }).click();
-		await expect(page).toHaveURL(new RegExp(`#${name}$`));
-		await expect(page.getByRole('heading', { level: 2, name, exact: true })).toBeInViewport();
-	}
+test('keeps to a few quiet sections', async ({ page }) => {
+	const headings = page.getByRole('heading', { level: 2 });
+	await expect(headings).toHaveText(['Projects', 'Work', 'Education', 'Contact']);
+	await expect(page.getByRole('heading', { level: 3 })).toHaveCount(0);
+	await expect(page.getByRole('navigation')).toHaveCount(0);
 });
 
-test('projects are listed with their stacks and source links', async ({ page }) => {
-	const projects = page.getByRole('region', { name: 'projects', exact: true });
-	await expect(projects.getByRole('article')).toHaveCount(4);
-	const pianoforte = projects.getByRole('article', { name: 'Pianoforte' });
-	await expect(pianoforte).toContainText('AWS CDK');
-	const source = pianoforte.getByRole('link', { name: /source for pianoforte/i });
-	await expect(source).toHaveAttribute('href', 'https://github.com/conorwalsh-1/cs4421-astro-blog');
-	await expect(source).toHaveAttribute('target', '_blank');
-	await expect(source).toHaveAttribute('rel', 'noopener noreferrer');
+test('uses a plain sans-serif design, not a code or terminal style', async ({ page }) => {
+	const fonts = await page.evaluate(() =>
+		['body', 'h1', 'h2', 'a'].map((selector) => getComputedStyle(document.querySelector(selector)!).fontFamily),
+	);
+	for (const font of fonts) expect(font).not.toMatch(/mono|consolas|courier/i);
+	await expect(page.locator('body')).not.toContainText(/\$ |whoami|~\//);
 });
 
-test('experience and education timelines are most recent first', async ({ page }) => {
-	const work = page.getByRole('list', { name: 'Work experience' });
-	await expect(work.locator(':scope > li h4').first()).toContainText('Crew Member');
-	const education = page.getByRole('list', { name: 'Education' });
-	await expect(education.locator(':scope > li h4').first()).toContainText('University of Limerick');
-	await expect(education.locator('time').first()).toHaveAttribute('datetime', '2026-09');
+test('projects link to their source in a new tab', async ({ page }) => {
+	const projects = page.getByRole('region', { name: 'Projects' });
+	await expect(projects.getByRole('listitem')).toHaveCount(4);
+	const pianoforte = projects.getByRole('link', { name: /^Pianoforte/ });
+	await expect(pianoforte).toHaveAttribute('href', 'https://github.com/conorwalsh-1/cs4421-astro-blog');
+	await expect(pianoforte).toHaveAttribute('target', '_blank');
+	await expect(pianoforte).toHaveAttribute('rel', 'noopener noreferrer');
+	await expect(projects).toContainText('Asteroid Deflection Model');
 });
 
-test('skills are grouped', async ({ page }) => {
-	const skills = page.getByRole('region', { name: 'skills', exact: true });
-	await expect(skills.getByRole('term')).toHaveCount(5);
-	await expect(skills).toContainText('TypeScript');
+test('work and education are most recent first', async ({ page }) => {
+	const work = page.getByRole('region', { name: 'Work' }).getByRole('listitem');
+	await expect(work.first()).toContainText('Crew Member');
+	await expect(work.first()).toContainText('2025 – Now');
+	const education = page.getByRole('region', { name: 'Education' }).getByRole('listitem');
+	await expect(education.first()).toContainText('University of Limerick');
+	await expect(education.first()).toContainText('2026 – 2029');
 });
 
 test('contact links are correct and no phone number is published', async ({ page }) => {
-	const contact = page.getByRole('region', { name: 'contact', exact: true });
+	const contact = page.getByRole('region', { name: 'Contact' });
 	await expect(contact.getByRole('link', { name: 'conorwalsh680@gmail.com' })).toHaveAttribute(
 		'href',
 		'mailto:conorwalsh680@gmail.com',
 	);
-	await expect(contact.getByRole('link', { name: /GitHub/ })).toHaveAttribute('href', 'https://github.com/conorwalsh-1');
-	await expect(contact.getByRole('link', { name: /LinkedIn/ })).toHaveAttribute('href', /linkedin\.com\/in\//);
+	await expect(contact.getByRole('link', { name: 'GitHub' })).toHaveAttribute('href', 'https://github.com/conorwalsh-1');
+	await expect(contact.getByRole('link', { name: 'LinkedIn' })).toHaveAttribute('href', /linkedin\.com\/in\//);
 	await expect(page.locator('body')).not.toContainText(/085\s?158/);
 });
 
-test('theme toggle switches theme and remembers it across reloads', async ({ page }) => {
-	const html = page.locator('html');
-	const toggle = page.getByRole('button', { name: /switch to (light|dark) theme/i });
-	const before = await page.evaluate(() => matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-	const after = before === 'dark' ? 'light' : 'dark';
-
-	await toggle.click();
-	await expect(html).toHaveAttribute('data-theme', after);
-	// Label in Name (WCAG 2.5.3): the accessible name starts with the visible text.
-	await expect(toggle).toHaveAccessibleName(`theme ${after} (switch to ${before} theme)`);
-
-	await page.reload();
-	await expect(html).toHaveAttribute('data-theme', after);
+test('every external link opens safely in a new tab', async ({ page }) => {
+	const links = page.locator('a[href^="http"]');
+	const count = await links.count();
+	expect(count).toBeGreaterThan(0);
+	for (let i = 0; i < count; i++) {
+		await expect(links.nth(i)).toHaveAttribute('target', '_blank');
+		await expect(links.nth(i)).toHaveAttribute('rel', 'noopener noreferrer');
+	}
 });
 
 test('page never scrolls horizontally', async ({ page }) => {
@@ -83,7 +80,7 @@ test('page never scrolls horizontally', async ({ page }) => {
 
 test('unknown pages show the 404 page', async ({ page }) => {
 	await page.goto('/404');
-	await expect(page.getByRole('heading', { level: 1 })).toContainText('404');
-	await page.getByRole('link', { name: /cd ~/ }).click();
+	await expect(page.getByRole('heading', { level: 1 })).toHaveText('Page not found');
+	await page.getByRole('link', { name: 'Go to the home page' }).click();
 	await expect(page.getByRole('heading', { level: 1 })).toHaveText('Conor Walsh');
 });
