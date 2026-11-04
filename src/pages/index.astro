@@ -14,12 +14,13 @@ const rows = (roles: typeof work) =>
 ---
 
 <Base title={profile.name} description={description}>
-	<header class="intro">
+	<header class="intro reveal">
 		<h1>{profile.name}</h1>
 		<p class="role">{profile.role}</p>
+		<p class="where"><span class="dot" aria-hidden="true"></span>Limerick, Ireland</p>
 	</header>
 
-	<div class="prose">
+	<div class="prose reveal" style="--i: 1">
 		<p>
 			I’m in my first year of Immersive Software Engineering at the{' '}
 			<a href={profile.school.href} {...external}>{profile.school.name}</a>. Before that I spent most of my time on maths
@@ -40,14 +41,15 @@ const rows = (roles: typeof work) =>
 	<List
 		id="projects"
 		heading="Projects"
+		order={2}
 		rows={projects.map((p) => ({ title: p.name, detail: p.blurb, date: p.year, href: p.href }))}
 	/>
 
-	<List id="work" heading="Work" rows={rows(work)} />
+	<List id="work" heading="Work" rows={rows(work)} order={3} />
 
-	<List id="education" heading="Education" rows={rows(education)} />
+	<List id="education" heading="Education" rows={rows(education)} order={4} />
 
-	<section class="contact" aria-labelledby="contact-heading">
+	<section class="contact reveal" style="--i: 5" aria-labelledby="contact-heading">
 		<h2 id="contact-heading">Contact</h2>
 		<p>
 			Email me at <a href={mailto(profile.email)}>{profile.email}</a>, or find me on{' '}
@@ -66,6 +68,23 @@ const rows = (roles: typeof work) =>
 
 	.role {
 		color: var(--muted);
+	}
+
+	.where {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		margin-top: 0.35rem;
+		font-size: 0.875rem;
+		color: var(--muted);
+	}
+
+	.dot {
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: var(--accent);
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
 	}
 
 	.prose {

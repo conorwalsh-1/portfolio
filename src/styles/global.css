@@ -10,6 +10,8 @@
 	--muted: #6b6b6b;
 	--line: #e7e6e3;
 	--link-line: #b5b4b0;
+	--accent: #c2410c;
+	--hover: #f4f2ee;
 
 	--font: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
@@ -22,6 +24,8 @@
 		--muted: #949494;
 		--line: #262626;
 		--link-line: #5c5c5c;
+		--accent: #fb923c;
+		--hover: #1b1b1b;
 	}
 }
 
@@ -57,7 +61,20 @@ a {
 }
 
 a:hover {
-	text-decoration-color: currentColor;
+	text-decoration-color: var(--accent);
+}
+
+/* Sections ease in one after another on load. */
+.reveal {
+	animation: reveal 600ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+	animation-delay: calc(var(--i, 0) * 90ms);
+}
+
+@keyframes reveal {
+	from {
+		opacity: 0;
+		transform: translateY(6px);
+	}
 }
 
 :focus-visible {
@@ -81,5 +98,6 @@ ul {
 @media (prefers-reduced-motion: reduce) {
 	* {
 		transition: none !important;
+		animation: none !important;
 	}
 }
