@@ -22,4 +22,11 @@ npm run dev            # http://localhost:4321
 ## CI
 
 Every pull request to `main` runs **validate** (lint, type check, unit tests with
-coverage, build) and **e2e** (Playwright and accessibility). Both must pass before merging.
+coverage, build), **infrastructure** (CDK tests and synth) and **e2e** (Playwright and
+accessibility). All must pass before merging.
+
+## Deploy (optional)
+
+The `cdk/` app deploys the static build to AWS S3, optionally behind CloudFront. Deploys are
+**manual only** (Actions → *Deploy Portfolio via AWS CDK*), so nothing is billed until it is run.
+See [cdk/README.md](cdk/README.md) and the [rollback runbook](docs/runbooks/rollback-drills.md).
